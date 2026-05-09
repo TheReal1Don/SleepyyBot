@@ -23,7 +23,7 @@ function startBot() {
   const bot = mineflayer.createBot({
     host: 'SilkRoad12.aternos.me',
     port: 33282,
-    username: 'AFK_CRY',
+    username: 'AFK_Server',
        version: '1.21.6'
   })
 
