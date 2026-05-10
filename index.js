@@ -12,9 +12,7 @@ console.log(`
 
         Sleepyy AFK Bot
         Made By Sleepyy
-
 `)
-
 
 const mineflayer = require('mineflayer')
 
@@ -22,22 +20,25 @@ function startBot() {
 
   const bot = mineflayer.createBot({
     host: 'SilkRoad12.aternos.me',
-    port: 33282,
     username: 'AFK_Server',
-       version: '1.21.6'
+    version: '1.21.6'
   })
+
+  let antiAfkStarted = false
 
   bot.on('login', () => {
     console.log('✅ Bot joined the server')
   })
 
   bot.on('spawn', () => {
+
     console.log('🚀 Bot spawned into the world')
 
-    // Send a chat message
     bot.chat('AFK Bot Connected')
 
-    // Simple anti-afk movement every 10 seconds
+    if (antiAfkStarted) return
+    antiAfkStarted = true
+
     setInterval(() => {
 
       if (!bot.entity) return
@@ -53,32 +54,42 @@ function startBot() {
       const yaw = Math.random() * Math.PI * 2
       bot.look(yaw, 0, true)
 
-    }, 10000)
+    }, 5000)
+
   })
 
   bot.on('chat', (username, message) => {
+
     if (username === bot.username) return
 
     console.log(`[${username}] ${message}`)
+
   })
 
   bot.on('kicked', (reason) => {
+
     console.log('❌ Bot was kicked:')
     console.log(reason)
+
   })
 
   bot.on('end', () => {
-    console.log('🔄 Disconnected, reconnecting in 30 seconds...')
+
+    console.log('🔄 Disconnected, reconnecting in 5 seconds...')
 
     setTimeout(() => {
       startBot()
-    }, 30000)
+    }, 5000)
+
   })
 
   bot.on('error', (err) => {
+
     console.log('⚠️ Error:')
     console.log(err.message)
+
   })
+
 }
 
 startBot()
