@@ -43,16 +43,32 @@ function startBot() {
 
       if (!bot.entity) return
 
-      // Jump
+      const actions = ['forward', 'back', 'left', 'right']
+
+      const randomAction =
+        actions[Math.floor(Math.random() * actions.length)]
+
+      // start movement
+      bot.setControlState(randomAction, true)
+
+      // jump
       bot.setControlState('jump', true)
 
+      // stop movement after random time
       setTimeout(() => {
-        bot.setControlState('jump', false)
-      }, 500)
 
-      // Random look direction
+        bot.setControlState(randomAction, false)
+        bot.setControlState('jump', false)
+
+      }, 1500)
+
+      // random camera movement
       const yaw = Math.random() * Math.PI * 2
-      bot.look(yaw, 0, true)
+      const pitch = (Math.random() - 0.5) * 0.5
+
+      bot.look(yaw, pitch, true)
+
+      console.log(`🎮 Random move: ${randomAction}`)
 
     }, 5000)
 
