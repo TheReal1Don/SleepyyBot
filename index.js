@@ -20,11 +20,11 @@ function startBot() {
 
   const bot = mineflayer.createBot({
     host: 'SilkRoad12.aternos.me',
-    username: 'AFK_Server',
+    username: 'AFFK_Server',
     version: '1.21.6'
   })
 
-  let antiAfkStarted = false
+  let antiAfkLoop
 
   bot.on('login', () => {
     console.log('✅ Bot joined the server')
@@ -36,10 +36,9 @@ function startBot() {
 
     bot.chat('AFK Bot Connected')
 
-    if (antiAfkStarted) return
-    antiAfkStarted = true
+    if (antiAfkLoop) clearInterval(antiAfkLoop)
 
-    setInterval(() => {
+    antiAfkLoop = setInterval(() => {
 
       if (!bot.entity) return
 
@@ -48,29 +47,43 @@ function startBot() {
       const randomAction =
         actions[Math.floor(Math.random() * actions.length)]
 
-      // start movement
+      // وقف كل الحركات
+      actions.forEach(action => {
+        bot.setControlState(action, false)
+      })
+
+      // حركة عشوائية
       bot.setControlState(randomAction, true)
 
-      // jump
+      // سبرنت
+      bot.setControlState('sprint', true)
+
+      // نط
       bot.setControlState('jump', true)
 
-      // stop movement after random time
-      setTimeout(() => {
-
-        bot.setControlState(randomAction, false)
-        bot.setControlState('jump', false)
-
-      }, 1500)
-
-      // random camera movement
+      // لف الكاميرا
       const yaw = Math.random() * Math.PI * 2
       const pitch = (Math.random() - 0.5) * 0.5
 
       bot.look(yaw, pitch, true)
 
-      console.log(`🎮 Random move: ${randomAction}`)
+      // رسالة بالشات كل فترة
+      if (Math.random() > 0.7) {
+        bot.chat('/list')
+      }
 
-    }, 5000)
+      console.log(`🎮 Moving: ${randomAction}`)
+
+      // وقف الحركة بعد 3 ثواني
+      setTimeout(() => {
+
+        bot.setControlState(randomAction, false)
+        bot.setControlState('jump', false)
+        bot.setControlState('sprint', false)
+
+      }, 3000)
+
+    }, 7000)
 
   })
 
