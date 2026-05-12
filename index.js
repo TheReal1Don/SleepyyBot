@@ -39,7 +39,7 @@ function startBot() {
 
     reconnecting = false
 
-    // امسح أي لوب قديم
+    // حذف أي لوب قديم
     if (antiAfkLoop) {
       clearInterval(antiAfkLoop)
     }
@@ -53,7 +53,7 @@ function startBot() {
       const randomAction =
         actions[Math.floor(Math.random() * actions.length)]
 
-      // وقف كل الحركات
+      // وقف كل الحركات القديمة
       actions.forEach(action => {
         bot.setControlState(action, false)
       })
@@ -88,7 +88,7 @@ function startBot() {
 
     if (username === bot.username) return
 
-    console.log(`[${username}] ${message})
+    console.log(`[${username}] ${message}`)
 
   })
 
