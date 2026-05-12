@@ -16,27 +16,33 @@ console.log(`
 
 const mineflayer = require('mineflayer')
 
+let reconnecting = false
+let antiAfkLoop = null
+
 function startBot() {
 
   const bot = mineflayer.createBot({
     host: 'SilkRoad12.aternos.me',
-    username: 'AFFK_Server',
+    username: 'dhiyaa',
     version: '1.21.6'
   })
 
-  let antiAfkLoop
-
   bot.on('login', () => {
+
     console.log('✅ Bot joined the server')
+
   })
 
   bot.on('spawn', () => {
 
     console.log('🚀 Bot spawned into the world')
 
-    bot.chat('AFK Bot Connected')
+    reconnecting = false
 
-    if (antiAfkLoop) clearInterval(antiAfkLoop)
+    // امسح أي لوب قديم
+    if (antiAfkLoop) {
+      clearInterval(antiAfkLoop)
+    }
 
     antiAfkLoop = setInterval(() => {
 
@@ -55,9 +61,6 @@ function startBot() {
       // حركة عشوائية
       bot.setControlState(randomAction, true)
 
-      // سبرنت
-      bot.setControlState('sprint', true)
-
       // نط
       bot.setControlState('jump', true)
 
@@ -67,23 +70,17 @@ function startBot() {
 
       bot.look(yaw, pitch, true)
 
-      // رسالة بالشات كل فترة
-      if (Math.random() > 0.7) {
-        bot.chat('/list')
-      }
-
       console.log(`🎮 Moving: ${randomAction}`)
 
-      // وقف الحركة بعد 3 ثواني
+      // وقف الحركة بعد ثانيتين
       setTimeout(() => {
 
         bot.setControlState(randomAction, false)
         bot.setControlState('jump', false)
-        bot.setControlState('sprint', false)
 
-      }, 3000)
+      }, 2000)
 
-    }, 7000)
+    }, 20000)
 
   })
 
@@ -91,7 +88,7 @@ function startBot() {
 
     if (username === bot.username) return
 
-    console.log(`[${username}] ${message}`)
+    console.log(`[${username}] ${message})
 
   })
 
@@ -104,11 +101,23 @@ function startBot() {
 
   bot.on('end', () => {
 
-    console.log('🔄 Disconnected, reconnecting in 5 seconds...')
+    if (antiAfkLoop) {
+      clearInterval(antiAfkLoop)
+      antiAfkLoop = null
+    }
+
+    if (reconnecting) return
+
+    reconnecting = true
+
+    console.log('🔄 Disconnected, reconnecting in 30 seconds...')
 
     setTimeout(() => {
+
+      reconnecting = false
       startBot()
-    }, 5000)
+
+    }, 30000)
 
   })
 
